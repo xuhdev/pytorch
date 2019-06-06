@@ -61,9 +61,16 @@ def get_version(cmd):
 def get_command():
     "Returns cmake command."
 
-    cmake_command = 'cmake'
+    try:
+        # We will cache the found cmake command upon first call of
+        # get_command().
+        return get_command.cmake_command
+    except AttributeError:
+        pass
+
+    get_command.cmake_command = 'cmake'
     if IS_WINDOWS:
-        return cmake_command
+        return get_command.cmake_command
     cmake3 = _which('cmake3')
     if cmake3 is not None:
         cmake = _which('cmake')
@@ -71,8 +78,8 @@ def get_command():
             bare_version = get_version(cmake)
             if (bare_version < LooseVersion("3.5.0") and
                     get_version(cmake3) > bare_version):
-                cmake_command = 'cmake3'
-    return cmake_command
+                get_command.cmake_command = 'cmake3'
+    return get_command.cmake_command
 
 
 def defines(lst, **kwargs):
