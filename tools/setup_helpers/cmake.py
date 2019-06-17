@@ -67,6 +67,8 @@ class CMake:
         else:
             self._build_type = "Release"
 
+        self._generated = False
+
     @property
     def _cmake_cache_file(self):
         r"""Returns the path to CMakeCache.txt.
@@ -135,22 +137,36 @@ class CMake:
             return not (up_val in ('FALSE', 'OFF', 'N', 'NO', '0', '', 'NOTFOUND') or up_val.endswith('-NOTFOUND'))
         elif cmake_type == 'FILEPATH':
             if up_val.endswith('-NOTFOUND'):
-                return None
+                return False
             else:
                 return cmake_value
         else:  # Directly return the cmake_value.
             return cmake_value
 
     @staticmethod
+    def _parse_cmake_cache_line(line):
+        r"""Returns the variable and value that a line in CMakeCache.txt involves.
+
+        Arguments:
+          line (string): A line in CMakeCache.txt that expresses an assignment.
+        Returns:
+          tuple: A triple (variable, type, value).
+        """
+        # Space can also be part of variable name and value
+        matched = re.match(r'(\S.*):\s*([a-zA-Z_-][a-zA-Z0-9_-]*)\s*=\s*(.*)', line.strip())
+        if matched is None:  # Illegal line
+            raise ValueError('Unexpected line in CMakeCache.txt: {}'.format(line))
+        return matched.groups()
+
+    @staticmethod
     def _get_cmake_cache_variables(cmake_cache_file):
         r"""Gets values in CMakeCache.txt into a dictionary.
 
         Arguments:
-          cmake_cache_file: A CMakeCache.txt file object.
+          cmake_cache_file (file object): A CMakeCache.txt file object.
         Returns:
           dict: A ``dict`` containing the value of cached CMake variables.
         """
-
         results = dict()
         for line in cmake_cache_file:
             line = line.strip()
@@ -158,11 +174,7 @@ class CMake:
                 # Blank or comment line, skip
                 continue
 
-            # Space can also be part of variable name and value
-            matched = re.match(r'(\S.*):\s*([a-zA-Z_-][a-zA-Z0-9_-]*)\s*=\s*(.*)', line)
-            if matched is None:  # Illegal line
-                raise ValueError('Unexpected line in {}: {}'.format(repr(cmake_cache_file), line))
-            variable, type_, value = matched.groups()
+            variable, type_, value = CMake._parse_cmake_cache_line(line)
             if type_.upper() in ('INTERNAL', 'STATIC'):
                 # CMake internal variable, do not touch
                 continue
@@ -177,6 +189,65 @@ class CMake:
         """
         with open(self._cmake_cache_file) as f:
             return CMake._get_cmake_cache_variables(f)
+
+    @staticmethod
+    def _update_cmake_cache_variables(cmake_cache_file, var_values):
+        r"""Update the value of a variable to CMakeCache.txt.
+        Arguments:
+          cmake_cache_file (file object): A readable and writable CMakeCache.txt file object.
+          var_values (dict): Variables and their new values to be updated to.
+        """
+        cmake_cache_file.seek(0)
+        unset_vars = set(var_values)
+        lines = cmake_cache_file.readlines()
+        for i, line in enumerate(lines):  # go line by line, replace variable values with newly specified ones
+            line = line.strip()
+            if not line or line.startswith(('#', '//')):
+                # Blank or comment line, skip
+                continue
+
+            variable, type_, _ = CMake._parse_cmake_cache_line(line)
+            if type_.upper() in ('INTERNAL', 'STATIC'):
+                # CMake internal variable, do not touch
+                continue
+            value = var_values.get(variable)
+            if value is None:  # Key not found
+                continue
+            lines[i] = '{}:{}={}'.format(variable, type_, value)
+            unset_vars.remove(variable)
+
+        # Set variables that does not show up in the current CMakeCache.txt.
+        lines.extend('{}={}'.format(v, variable[v]) for v in unset_vars)
+
+        # Write changes to the file.
+        cmake_cache_file.seek(0)
+        cmake_cache_file.writelines(lines)
+
+    def update_cmake_cache_variables(self, var_values):
+        r"""Update the value of a variable to CMakeCache.txt.
+        Arguments:
+          var_values (dict): Variables and their new values to be updated to.
+        """
+        with open(self._cmake_cache_file, 'r+') as f:
+            return CMake._update_cmake_cache_variables(f, var_values)
+
+    def update_cmake_cache_variables_from_env(self, env=os.environ):
+        r"""Update the value of a variable to CMakeCache.txt from environmental variables.
+        Arguments:
+          env (dict): Environment variables.
+        """
+        var_values = dict()
+        for var, value in env.items():
+            if var in ('DEBUG', 'REL_WITH_DEB_INFO'):
+                var_values['CMAKE_BUILD_TYPE'] = value
+            elif var.startswith(('BUILD_', 'USE_')):
+                # We currently pass over all environment variables that start with "BUILD_" or "USE_". This is because
+                # we currently have no reliable way to get the list of all build options we have specified in
+                # CMakeLists.txt. (`cmake -L` won't print dependent options when the dependency condition is not met.)
+                # We will possibly change this in the future by parsing CMakeLists.txt by ourselves.
+                var_values[var] = value
+
+        self.update_cmake_cache_variables(var_values)
 
     def generate(self, version, cmake_python_library, build_python, build_test, my_env, rerun):
         "Runs cmake to generate native build files."
@@ -340,9 +411,13 @@ class CMake:
         # 2. https://stackoverflow.com/a/27169347
         args.append(base_dir)
         self.run(args, env=my_env)
+        self._generated = True
 
     def build(self, my_env):
         "Runs cmake to build binaries."
+
+        if not self._generated:  # We did not generate CMakeCache.txt in this run. Update it.
+            self.update_cmake_cache_variables_from_env(my_env)
 
         max_jobs = os.getenv('MAX_JOBS', str(multiprocessing.cpu_count()))
         build_args = ['--build', '.', '--target',
