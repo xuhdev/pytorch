@@ -904,17 +904,10 @@ def relu(input, inplace=False):
     :class:`~torch.nn.ReLU` for more details.
     """
     if inplace:
-        result = torch.relu_(input)
+        result = input.relu_()
     else:
         result = torch.relu(input)
     return result
-
-
-relu_ = _add_docstr(torch.relu_, r"""
-relu_(input) -> Tensor
-
-In-place version of :func:`~relu`.
-""")
 
 
 def glu(input, dim=-1):
@@ -982,17 +975,10 @@ def elu(input, alpha=1., inplace=False):
     See :class:`~torch.nn.ELU` for more details.
     """
     if inplace:
-        result = torch._C._nn.elu_(input, alpha)
+        result = input.elu_(alpha)
     else:
         result = torch._C._nn.elu(input, alpha)
     return result
-
-
-elu_ = _add_docstr(torch._C._nn.elu_, r"""
-elu_(input, alpha=1.) -> Tensor
-
-In-place version of :func:`~elu`.
-""")
 
 
 def selu(input, inplace=False):
@@ -1007,17 +993,10 @@ def selu(input, inplace=False):
     See :class:`~torch.nn.SELU` for more details.
     """
     if inplace:
-        result = torch.selu_(input)
+        result = input.selu_()
     else:
         result = torch.selu(input)
     return result
-
-
-selu_ = _add_docstr(torch.selu_, r"""
-selu_(input) -> Tensor
-
-In-place version of :func:`~selu`.
-""")
 
 
 def celu(input, alpha=1., inplace=False):
@@ -1030,16 +1009,10 @@ def celu(input, alpha=1., inplace=False):
     See :class:`~torch.nn.CELU` for more details.
     """
     if inplace:
-        result = torch.celu_(input, alpha)
+        result = input.celu_(alpha)
     else:
         result = torch.celu(input, alpha)
     return result
-
-celu_ = _add_docstr(torch.celu_, r"""
-celu_(input, alpha=1.) -> Tensor
-
-In-place version of :func:`~celu`.
-""")
 
 
 def leaky_relu(input, negative_slope=0.01, inplace=False):
@@ -1053,7 +1026,7 @@ def leaky_relu(input, negative_slope=0.01, inplace=False):
     See :class:`~torch.nn.LeakyReLU` for more details.
     """
     if inplace:
-        result = torch._C._nn.leaky_relu_(input, negative_slope)
+        result = input.leaky_relu_(negative_slope)
     else:
         result = torch._C._nn.leaky_relu(input, negative_slope)
     return result
@@ -1088,17 +1061,11 @@ def rrelu(input, lower=1. / 8, upper=1. / 3, training=False, inplace=False):
     See :class:`~torch.nn.RReLU` for more details.
     """
     if inplace:
-        result = torch.rrelu_(input, lower, upper, training)
+        result = input.rrelu_(lower, upper, training)
     else:
         result = torch.rrelu(input, lower, upper, training)
     return result
 
-
-rrelu_ = _add_docstr(torch.rrelu_, r"""
-rrelu_(input, lower=1./8, upper=1./3, training=False) -> Tensor
-
-In-place version of :func:`~rrelu`.
-""")
 
 logsigmoid = _add_docstr(torch._C._nn.log_sigmoid, r"""
 logsigmoid(input) -> Tensor

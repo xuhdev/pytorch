@@ -633,6 +633,10 @@ inline Tensor & Tensor::round_() {
     static auto table = globalATenDispatch().getOpTable("aten::round_(Tensor(a!) self) -> Tensor(a!)");
     return table->getOp<Tensor & (Tensor &)>(tensorTypeIdToBackend(type_id()), is_variable())(*this);
 }
+inline Tensor & Tensor::rrelu_(Scalar lower, Scalar upper, bool training, Generator * generator) {
+    static auto table = globalATenDispatch().getOpTable("aten::rrelu_(Tensor(a!) self, Scalar lower=0.125, Scalar upper=0.3333333333333333, bool training=False, Generator? generator=None) -> Tensor(a!)");
+    return table->getOp<Tensor & (Tensor &, Scalar, Scalar, bool, Generator *)>(tensorTypeIdToBackend(type_id()), is_variable())(*this, lower, upper, training, generator);
+}
 inline Tensor Tensor::relu() const {
     static auto table = globalATenDispatch().getOpTable("aten::relu(Tensor self) -> Tensor");
     return table->getOp<Tensor (const Tensor &)>(tensorTypeIdToBackend(type_id()), is_variable())(*this);
@@ -674,6 +678,14 @@ inline Tensor Tensor::select(Dimname dim, int64_t index) const {
 inline Tensor Tensor::select(int64_t dim, int64_t index) const {
     static auto table = globalATenDispatch().getOpTable("aten::select(Tensor(a) self, int dim, int index) -> Tensor(a)");
     return table->getOp<Tensor (const Tensor &, int64_t, int64_t)>(tensorTypeIdToBackend(type_id()), is_variable())(*this, dim, index);
+}
+inline Tensor & Tensor::selu_() {
+    static auto table = globalATenDispatch().getOpTable("aten::selu_(Tensor(a!) self) -> Tensor(a!)");
+    return table->getOp<Tensor & (Tensor &)>(tensorTypeIdToBackend(type_id()), is_variable())(*this);
+}
+inline Tensor & Tensor::celu_(Scalar alpha) {
+    static auto table = globalATenDispatch().getOpTable("aten::celu_(Tensor(a!) self, Scalar alpha=1.0) -> Tensor(a!)");
+    return table->getOp<Tensor & (Tensor &, Scalar)>(tensorTypeIdToBackend(type_id()), is_variable())(*this, alpha);
 }
 inline Tensor Tensor::sigmoid() const {
     static auto table = globalATenDispatch().getOpTable("aten::sigmoid(Tensor self) -> Tensor");
@@ -998,6 +1010,10 @@ inline Tensor Tensor::indices() const {
 inline Tensor Tensor::values() const {
     static auto table = globalATenDispatch().getOpTable("aten::values(Tensor(a) self) -> Tensor(a)");
     return table->getOp<Tensor (const Tensor &)>(tensorTypeIdToBackend(type_id()), is_variable())(*this);
+}
+inline Tensor & Tensor::copy_sparse_to_sparse_(const Tensor & src, bool non_blocking) {
+    static auto table = globalATenDispatch().getOpTable("aten::copy_sparse_to_sparse_(Tensor(a!) self, Tensor src, bool non_blocking=False) -> Tensor(a!)");
+    return table->getOp<Tensor & (Tensor &, const Tensor &, bool)>(tensorTypeIdToBackend(type_id()), is_variable())(*this, src, non_blocking);
 }
 inline int64_t Tensor::numel() const {
     static auto table = globalATenDispatch().getOpTable("aten::numel(Tensor self) -> int");

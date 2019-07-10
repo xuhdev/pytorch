@@ -494,6 +494,7 @@ class CAFFE2_API Tensor {
   Tensor reshape_as(const Tensor & other) const;
   Tensor round() const;
   Tensor & round_();
+  Tensor & rrelu_(Scalar lower=0.125, Scalar upper=0.3333333333333333, bool training=false, Generator * generator=nullptr);
   Tensor relu() const;
   Tensor & relu_();
   Tensor prelu(const Tensor & weight) const;
@@ -506,6 +507,8 @@ class CAFFE2_API Tensor {
   Tensor select(Dimname dim, int64_t index) const;
   #endif
   Tensor select(int64_t dim, int64_t index) const;
+  Tensor & selu_();
+  Tensor & celu_(Scalar alpha=1.0);
   Tensor sigmoid() const;
   Tensor & sigmoid_();
   Tensor sin() const;
@@ -587,6 +590,7 @@ class CAFFE2_API Tensor {
   Tensor & _coalesced_(bool coalesced);
   Tensor indices() const;
   Tensor values() const;
+  Tensor & copy_sparse_to_sparse_(const Tensor & src, bool non_blocking=false);
   int64_t numel() const;
   std::vector<Tensor> unbind(int64_t dim=0) const;
   Tensor to_sparse(int64_t sparse_dim) const;

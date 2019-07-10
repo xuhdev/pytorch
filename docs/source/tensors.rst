@@ -197,6 +197,8 @@ view of a storage and defines numeric operations on it.
    .. automethod:: cauchy_
    .. automethod:: ceil
    .. automethod:: ceil_
+   .. automethod:: celu
+   .. automethod:: celu_
    .. automethod:: char
    .. automethod:: cholesky
    .. automethod:: cholesky_inverse
@@ -236,6 +238,8 @@ view of a storage and defines numeric operations on it.
    .. automethod:: double
    .. automethod:: eig
    .. automethod:: element_size
+   .. automethod:: elu
+   .. automethod:: elu_
    .. automethod:: eq
    .. automethod:: eq_
    .. automethod:: equal
@@ -376,6 +380,8 @@ view of a storage and defines numeric operations on it.
    .. automethod:: reciprocal
    .. automethod:: reciprocal_
    .. automethod:: register_hook
+   .. automethod:: relu
+   .. automethod:: relu_
    .. automethod:: remainder
    .. automethod:: remainder_
    .. automethod:: renorm
@@ -394,6 +400,8 @@ view of a storage and defines numeric operations on it.
    .. automethod:: rot90
    .. automethod:: round
    .. automethod:: round_
+   .. automethod:: rrelu
+   .. automethod:: rrelu_
    .. automethod:: rsqrt
    .. automethod:: rsqrt_
    .. automethod:: scatter
@@ -401,6 +409,8 @@ view of a storage and defines numeric operations on it.
    .. automethod:: scatter_add_
    .. automethod:: scatter_add
    .. automethod:: select
+   .. automethod:: selu
+   .. automethod:: selu_
    .. automethod:: set_
    .. automethod:: share_memory_
    .. automethod:: short
