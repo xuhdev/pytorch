@@ -100,7 +100,17 @@ Tensor& mul_(Tensor& self, const Tensor& other) {
   return native::mul_out(self, self, other);
 }
 
+// Basic checking for all sub functions.
+static inline void sub_check(const Tensor& self, const Tensor& other) {
+  TORCH_CHECK(self.scalar_type() != kBool || other.scalar_type() != kBool,
+              "Subtraction, the `-` operator, on bool tensors is not supported.");
+  TORCH_CHECK(self.scalar_type() != kBool && other.scalar_type() != kBool,
+              "Subtraction, the `-` operator, on bool tensors is not supported. "
+              "Use the `~` or `bitwise_not()` operator instead.");
+}
+
 Tensor& sub_out(Tensor& result, const Tensor& self, const Tensor& other, Scalar alpha) {
+  sub_check(self, other);
   if (other.is_sparse()) {
     if (!self.sizes().equals(other.sizes())) {
       AT_ERROR("sizes do not match");
@@ -121,6 +131,7 @@ Tensor& sub_out(Tensor& result, const Tensor& self, const Tensor& other, Scalar 
 }
 
 Tensor sub(const Tensor& self, const Tensor& other, Scalar alpha) {
+  sub_check(self, other);
   Tensor result;
   if (other.is_sparse()) {
     result = at::empty({0}, self.options());
