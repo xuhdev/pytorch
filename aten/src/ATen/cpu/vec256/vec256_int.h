@@ -405,6 +405,229 @@ struct Vec256<int16_t> : public Vec256i {
 };
 
 template <>
+struct Vec256<int8_t> : public Vec256i {
+  using value_type = int8_t;
+  static constexpr int size() {
+    return 32;
+  }
+  using Vec256i::Vec256i;
+  Vec256() {}
+  Vec256(int8_t v) { values = _mm256_set1_epi8(v); }
+  Vec256(int8_t val1, int8_t val2, int8_t val3, int8_t val4,
+         int8_t val5, int8_t val6, int8_t val7, int8_t val8,
+         int8_t val9, int8_t val10, int8_t val11, int8_t val12,
+         int8_t val13, int8_t val14, int8_t val15, int8_t val16,
+         int8_t val17, int8_t val18, int8_t val19, int8_t val20,
+         int8_t val21, int8_t val22, int8_t val23, int8_t val24,
+         int8_t val25, int8_t val26, int8_t val27, int8_t val28,
+         int8_t val29, int8_t val30, int8_t val31, int8_t val32) {
+    values = _mm256_setr_epi8(val1, val2, val3, val4, val5, val6, val7, val8,
+                              val9, val10, val11, val12, val13, val14, val15, val16,
+                              val17, val18, val19, val20, val21, val22, val23, val24,
+                              val25, val26, val27, val28, val29, val30, val31, val32);
+  }
+  template <int64_t mask>
+  static Vec256<int8_t> blend(Vec256<int8_t> a, Vec256<int8_t> b) {
+    __at_align32__ int8_t tmp_values[size()];
+    a.store(tmp_values);
+    if (mask & 0x01)
+      tmp_values[0] = _mm256_extract_epi8(b.values, 0);
+    if (mask & 0x02)
+      tmp_values[1] = _mm256_extract_epi8(b.values, 1);
+    if (mask & 0x04)
+      tmp_values[2] = _mm256_extract_epi8(b.values, 2);
+    if (mask & 0x08)
+      tmp_values[3] = _mm256_extract_epi8(b.values, 3);
+    if (mask & 0x10)
+      tmp_values[4] = _mm256_extract_epi8(b.values, 4);
+    if (mask & 0x20)
+      tmp_values[5] = _mm256_extract_epi8(b.values, 5);
+    if (mask & 0x40)
+      tmp_values[6] = _mm256_extract_epi8(b.values, 6);
+    if (mask & 0x80)
+      tmp_values[7] = _mm256_extract_epi8(b.values, 7);
+    if (mask & 0x100)
+      tmp_values[8] = _mm256_extract_epi8(b.values, 8);
+    if (mask & 0x200)
+      tmp_values[9] = _mm256_extract_epi8(b.values, 9);
+    if (mask & 0x400)
+      tmp_values[10] = _mm256_extract_epi8(b.values, 10);
+    if (mask & 0x800)
+      tmp_values[11] = _mm256_extract_epi8(b.values, 11);
+    if (mask & 0x1000)
+      tmp_values[12] = _mm256_extract_epi8(b.values, 12);
+    if (mask & 0x2000)
+      tmp_values[13] = _mm256_extract_epi8(b.values, 13);
+    if (mask & 0x4000)
+      tmp_values[14] = _mm256_extract_epi8(b.values, 14);
+    if (mask & 0x8000)
+      tmp_values[15] = _mm256_extract_epi8(b.values, 15);
+    if (mask & 0x10000L)
+      tmp_values[16] = _mm256_extract_epi8(b.values, 16);
+    if (mask & 0x20000L)
+      tmp_values[17] = _mm256_extract_epi8(b.values, 17);
+    if (mask & 0x40000L)
+      tmp_values[18] = _mm256_extract_epi8(b.values, 18);
+    if (mask & 0x80000L)
+      tmp_values[19] = _mm256_extract_epi8(b.values, 19);
+    if (mask & 0x100000L)
+      tmp_values[20] = _mm256_extract_epi8(b.values, 20);
+    if (mask & 0x200000L)
+      tmp_values[21] = _mm256_extract_epi8(b.values, 21);
+    if (mask & 0x400000L)
+      tmp_values[22] = _mm256_extract_epi8(b.values, 22);
+    if (mask & 0x800000L)
+      tmp_values[23] = _mm256_extract_epi8(b.values, 23);
+    if (mask & 0x1000000L)
+      tmp_values[24] = _mm256_extract_epi8(b.values, 24);
+    if (mask & 0x2000000L)
+      tmp_values[25] = _mm256_extract_epi8(b.values, 25);
+    if (mask & 0x4000000L)
+      tmp_values[26] = _mm256_extract_epi8(b.values, 26);
+    if (mask & 0x8000000L)
+      tmp_values[27] = _mm256_extract_epi8(b.values, 27);
+    if (mask & 0x10000000L)
+      tmp_values[28] = _mm256_extract_epi8(b.values, 28);
+    if (mask & 0x20000000L)
+      tmp_values[29] = _mm256_extract_epi8(b.values, 29);
+    if (mask & 0x40000000L)
+      tmp_values[30] = _mm256_extract_epi8(b.values, 30);
+    if (mask & 0x80000000L)
+      tmp_values[31] = _mm256_extract_epi8(b.values, 31);
+    return loadu(tmp_values);
+  }
+  static Vec256<int8_t> blendv(const Vec256<int8_t>& a, const Vec256<int8_t>& b,
+                                const Vec256<int8_t>& mask) {
+    return _mm256_blendv_epi8(a.values, b.values, mask.values);
+  }
+  static Vec256<int8_t> arange(int8_t base = 0, int8_t step = 1) {
+    return Vec256<int8_t>(
+      base,             base +      step, base +  2 * step, base +  3 * step,
+      base +  4 * step, base +  5 * step, base +  6 * step, base +  7 * step,
+      base +  8 * step, base +  9 * step, base + 10 * step, base + 11 * step,
+      base + 12 * step, base + 13 * step, base + 14 * step, base + 15 * step,
+      base + 16 * step, base + 17 * step, base + 18 * step, base + 19 * step,
+      base + 20 * step, base + 21 * step, base + 22 * step, base + 23 * step,
+      base + 24 * step, base + 25 * step, base + 26 * step, base + 27 * step,
+      base + 28 * step, base + 29 * step, base + 30 * step, base + 31 * step);
+  }
+  static Vec256<int8_t>
+  set(Vec256<int8_t> a, Vec256<int8_t> b, int8_t count = size()) {
+    switch (count) {
+      case 0:
+        return a;
+#define SET_LOWEST_N_BITS(n) ((~(int64_t) 0) >> (64 - n))
+      case 1:
+        return blend<SET_LOWEST_N_BITS(1)>(a, b);
+      case 2:
+        return blend<SET_LOWEST_N_BITS(2)>(a, b);
+      case 3:
+        return blend<SET_LOWEST_N_BITS(3)>(a, b);
+      case 4:
+        return blend<SET_LOWEST_N_BITS(4)>(a, b);
+      case 5:
+        return blend<SET_LOWEST_N_BITS(5)>(a, b);
+      case 6:
+        return blend<SET_LOWEST_N_BITS(6)>(a, b);
+      case 7:
+        return blend<SET_LOWEST_N_BITS(7)>(a, b);
+      case 8:
+        return blend<SET_LOWEST_N_BITS(8)>(a, b);
+      case 9:
+        return blend<SET_LOWEST_N_BITS(9)>(a, b);
+      case 10:
+        return blend<SET_LOWEST_N_BITS(10)>(a, b);
+      case 11:
+        return blend<SET_LOWEST_N_BITS(11)>(a, b);
+      case 12:
+        return blend<SET_LOWEST_N_BITS(12)>(a, b);
+      case 13:
+        return blend<SET_LOWEST_N_BITS(13)>(a, b);
+      case 14:
+        return blend<SET_LOWEST_N_BITS(14)>(a, b);
+      case 15:
+        return blend<SET_LOWEST_N_BITS(15)>(a, b);
+      case 16:
+        return blend<SET_LOWEST_N_BITS(16)>(a, b);
+      case 17:
+        return blend<SET_LOWEST_N_BITS(17)>(a, b);
+      case 18:
+        return blend<SET_LOWEST_N_BITS(18)>(a, b);
+      case 19:
+        return blend<SET_LOWEST_N_BITS(19)>(a, b);
+      case 20:
+        return blend<SET_LOWEST_N_BITS(20)>(a, b);
+      case 21:
+        return blend<SET_LOWEST_N_BITS(21)>(a, b);
+      case 22:
+        return blend<SET_LOWEST_N_BITS(22)>(a, b);
+      case 23:
+        return blend<SET_LOWEST_N_BITS(23)>(a, b);
+      case 24:
+        return blend<SET_LOWEST_N_BITS(24)>(a, b);
+      case 25:
+        return blend<SET_LOWEST_N_BITS(25)>(a, b);
+      case 26:
+        return blend<SET_LOWEST_N_BITS(26)>(a, b);
+      case 27:
+        return blend<SET_LOWEST_N_BITS(27)>(a, b);
+      case 28:
+        return blend<SET_LOWEST_N_BITS(28)>(a, b);
+      case 29:
+        return blend<SET_LOWEST_N_BITS(29)>(a, b);
+      case 30:
+        return blend<SET_LOWEST_N_BITS(30)>(a, b);
+      case 31:
+        return blend<SET_LOWEST_N_BITS(31)>(a, b);
+#undef SET_LOWEST_N_BITS
+    }
+    return b;
+  }
+  static Vec256<int8_t> loadu(const void* ptr) {
+    return _mm256_loadu_si256(reinterpret_cast<const __m256i*>(ptr));
+  }
+  static Vec256<int8_t> loadu(const void* ptr, int8_t count) {
+    __at_align32__ int8_t tmp_values[size()];
+    std::memcpy(tmp_values, ptr, count * sizeof(int8_t));
+    return loadu(tmp_values);
+  }
+  void store(void* ptr, int count = size()) const {
+    if (count == size()) {
+      _mm256_storeu_si256(reinterpret_cast<__m256i*>(ptr), values);
+    } else if (count > 0) {
+      __at_align32__ int8_t tmp_values[size()];
+      _mm256_storeu_si256(reinterpret_cast<__m256i*>(tmp_values), values);
+      std::memcpy(ptr, tmp_values, count * sizeof(int8_t));
+    }
+  }
+  const int8_t& operator[](int idx) const = delete;
+  int8_t& operator[](int idx)  = delete;
+  Vec256<int8_t> abs() const {
+    return _mm256_abs_epi8(values);
+  }
+  Vec256<int8_t> frac() const;
+  Vec256<int8_t> neg() const;
+  Vec256<int8_t> operator==(const Vec256<int8_t>& other) const {
+    return _mm256_cmpeq_epi8(values, other.values);
+  }
+  Vec256<int8_t> operator!=(const Vec256<int8_t>& other) const {
+    return invert(_mm256_cmpeq_epi8(values, other.values));
+  }
+  Vec256<int8_t> operator<(const Vec256<int8_t>& other) const {
+    return _mm256_cmpgt_epi8(other.values, values);
+  }
+  Vec256<int8_t> operator<=(const Vec256<int8_t>& other) const {
+    return invert(_mm256_cmpgt_epi8(values, other.values));
+  }
+  Vec256<int8_t> operator>(const Vec256<int8_t>& other) const {
+    return _mm256_cmpgt_epi8(values, other.values);
+  }
+  Vec256<int8_t> operator>=(const Vec256<int8_t>& other) const {
+    return invert(_mm256_cmpgt_epi8(other.values, values));
+  }
+};
+
+template <>
 Vec256<int64_t> inline operator+(const Vec256<int64_t>& a, const Vec256<int64_t>& b) {
   return _mm256_add_epi64(a, b);
 }
@@ -417,6 +640,11 @@ Vec256<int32_t> inline operator+(const Vec256<int32_t>& a, const Vec256<int32_t>
 template <>
 Vec256<int16_t> inline operator+(const Vec256<int16_t>& a, const Vec256<int16_t>& b) {
   return _mm256_add_epi16(a, b);
+}
+
+template <>
+Vec256<int8_t> inline operator+(const Vec256<int8_t>& a, const Vec256<int8_t>& b) {
+  return _mm256_add_epi8(a, b);
 }
 
 template <>
@@ -434,6 +662,11 @@ Vec256<int16_t> inline operator-(const Vec256<int16_t>& a, const Vec256<int16_t>
   return _mm256_sub_epi16(a, b);
 }
 
+template <>
+Vec256<int8_t> inline operator-(const Vec256<int8_t>& a, const Vec256<int8_t>& b) {
+  return _mm256_sub_epi8(a, b);
+}
+
 // Negation. Defined here so we can utilize operator-
 Vec256<int64_t> Vec256<int64_t>::neg() const {
   return Vec256<int64_t>(0) - *this;
@@ -445,6 +678,10 @@ Vec256<int32_t> Vec256<int32_t>::neg() const {
 
 Vec256<int16_t> Vec256<int16_t>::neg() const {
   return Vec256<int16_t>(0) - *this;
+}
+
+Vec256<int8_t> Vec256<int8_t>::neg() const {
+  return Vec256<int8_t>(0) - *this;
 }
 
 // Emulate operations with no native 64-bit support in avx,
@@ -515,6 +752,18 @@ Vec256<int16_t> inline operator*(const Vec256<int16_t>& a, const Vec256<int16_t>
 }
 
 template <>
+Vec256<int8_t> inline operator*(const Vec256<int8_t>& a, const Vec256<int8_t>& b) {
+  // _mm256_mullo_epi8 does not exist
+  int8_t c[Vec256<int8_t>::size()];
+  for (int i = 0; i < Vec256<int8_t>::size(); ++ i) {
+    int8_t ai = _mm256_extract_epi8(a, i);
+    int8_t bi = _mm256_extract_epi8(b, i);
+    c[i] = ai * bi;
+  }
+  return Vec256<int8_t>::loadu(c);
+}
+
+template <>
 Vec256<int64_t> inline minimum(const Vec256<int64_t>& a, const Vec256<int64_t>& b) {
   return emulate(a, b, [](int64_t a_point, int64_t b_point) {return std::min(a_point, b_point);});
 }
@@ -527,6 +776,11 @@ Vec256<int32_t> inline minimum(const Vec256<int32_t>& a, const Vec256<int32_t>& 
 template <>
 Vec256<int16_t> inline minimum(const Vec256<int16_t>& a, const Vec256<int16_t>& b) {
   return _mm256_min_epi16(a, b);
+}
+
+template <>
+Vec256<int8_t> inline minimum(const Vec256<int8_t>& a, const Vec256<int8_t>& b) {
+  return _mm256_min_epi8(a, b);
 }
 
 template <>
@@ -545,6 +799,11 @@ Vec256<int16_t> inline maximum(const Vec256<int16_t>& a, const Vec256<int16_t>& 
 }
 
 template <>
+Vec256<int8_t> inline maximum(const Vec256<int8_t>& a, const Vec256<int8_t>& b) {
+  return _mm256_max_epi8(a, b);
+}
+
+template <>
 Vec256<int64_t> inline clamp(const Vec256<int64_t>& a, const Vec256<int64_t>& min_val, const Vec256<int64_t>& max_val) {
   return emulate(a, min_val, max_val, [](int64_t a_point, int64_t min_point, int64_t max_point) {return std::min(max_point, std::max(a_point, min_point));});
 }
@@ -557,6 +816,11 @@ Vec256<int32_t> inline clamp(const Vec256<int32_t>& a, const Vec256<int32_t>& mi
 template <>
 Vec256<int16_t> inline clamp(const Vec256<int16_t>& a, const Vec256<int16_t>& min_val, const Vec256<int16_t>& max_val) {
   return _mm256_min_epi16(max_val, _mm256_max_epi16(a, min_val));
+}
+
+template <>
+Vec256<int8_t> inline clamp(const Vec256<int8_t>& a, const Vec256<int8_t>& min_val, const Vec256<int8_t>& max_val) {
+  return _mm256_min_epi8(max_val, _mm256_max_epi8(a, min_val));
 }
 
 template <>
@@ -575,6 +839,11 @@ Vec256<int16_t> inline clamp_max(const Vec256<int16_t>& a, const Vec256<int16_t>
 }
 
 template <>
+Vec256<int8_t> inline clamp_max(const Vec256<int8_t>& a, const Vec256<int8_t>& max_val) {
+  return _mm256_min_epi8(max_val, a);
+}
+
+template <>
 Vec256<int64_t> inline clamp_min(const Vec256<int64_t>& a, const Vec256<int64_t>& min_val) {
   return emulate(a, min_val, [](int64_t a_point, int64_t min_point) {return std::max(min_point, a_point);});
 }
@@ -587,6 +856,11 @@ Vec256<int32_t> inline clamp_min(const Vec256<int32_t>& a, const Vec256<int32_t>
 template <>
 Vec256<int16_t> inline clamp_min(const Vec256<int16_t>& a, const Vec256<int16_t>& min_val) {
   return _mm256_max_epi16(min_val, a);
+}
+
+template <>
+Vec256<int8_t> inline clamp_min(const Vec256<int8_t>& a, const Vec256<int8_t>& min_val) {
+  return _mm256_max_epi8(min_val, a);
 }
 
 template<typename T>
@@ -627,6 +901,10 @@ Vec256<int32_t> inline operator op(const Vec256<int32_t>& a, const Vec256<int32_
 }                                                                                         \
 template <>                                                                               \
 Vec256<int16_t> inline operator op(const Vec256<int16_t>& a, const Vec256<int16_t>& b) {  \
+  return func(a, b);                                                                      \
+}                                                                                         \
+template <>                                                                               \
+Vec256<int8_t> inline operator op(const Vec256<int8_t>& a, const Vec256<int8_t>& b) {     \
   return func(a, b);                                                                      \
 }
 
