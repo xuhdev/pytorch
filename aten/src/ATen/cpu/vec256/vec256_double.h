@@ -40,9 +40,7 @@ public:
                                const Vec256<double>& mask) {
     return _mm256_blendv_pd(a.values, b.values, mask.values);
   }
-  static Vec256<double> arange(double base = 0., double step = 1.) {
-    return Vec256<double>(base, base + step, base + 2 * step, base + 3 * step);
-  }
+  static Vec256<double> arange(double base = 0., double step = 1.);
   static Vec256<double> set(const Vec256<double>& a, const Vec256<double>& b,
                             int64_t count = size()) {
     switch (count) {
@@ -299,6 +297,11 @@ Vec256<double> inline fmadd(const Vec256<double>& a, const Vec256<double>& b, co
 }
 #endif
 
+// define here to make use of fmadd, operators + and *.
+Vec256<double> Vec256<double>::arange(double base, double step) {
+  static const Vec256<double> n(0.0, 1.0, 2.0, 3.0);
+  return fmadd(n, Vec256<double>(step), Vec256<double>(base));
+}
 #endif
 
 }}}

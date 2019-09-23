@@ -55,9 +55,7 @@ struct Vec256<int64_t> : public Vec256i {
                                 const Vec256<int64_t>& mask) {
     return _mm256_blendv_epi8(a.values, b.values, mask.values);
   }
-  static Vec256<int64_t> arange(int64_t base = 0, int64_t step = 1) {
-    return Vec256<int64_t>(base, base + step, base + 2 * step, base + 3 * step);
-  }
+  static Vec256<int64_t> arange(int64_t base = 0, int64_t step = 1);
   static Vec256<int64_t>
   set(Vec256<int64_t> a, Vec256<int64_t> b, int64_t count = size()) {
     switch (count) {
@@ -140,11 +138,7 @@ struct Vec256<int32_t> : public Vec256i {
                                 const Vec256<int32_t>& mask) {
     return _mm256_blendv_epi8(a.values, b.values, mask.values);
   }
-  static Vec256<int32_t> arange(int32_t base = 0, int32_t step = 1) {
-    return Vec256<int32_t>(
-      base,            base +     step, base + 2 * step, base + 3 * step,
-      base + 4 * step, base + 5 * step, base + 6 * step, base + 7 * step);
-  }
+  static Vec256<int32_t> arange(int32_t base = 0, int32_t step = 1);
   static Vec256<int32_t>
   set(Vec256<int32_t> a, Vec256<int32_t> b, int32_t count = size()) {
     switch (count) {
@@ -315,13 +309,7 @@ struct Vec256<int16_t> : public Vec256i {
                                 const Vec256<int16_t>& mask) {
     return _mm256_blendv_epi8(a.values, b.values, mask.values);
   }
-  static Vec256<int16_t> arange(int16_t base = 0, int16_t step = 1) {
-    return Vec256<int16_t>(
-      base,             base +      step, base +  2 * step, base +  3 * step,
-      base +  4 * step, base +  5 * step, base +  6 * step, base +  7 * step,
-      base +  8 * step, base +  9 * step, base + 10 * step, base + 11 * step,
-      base + 12 * step, base + 13 * step, base + 14 * step, base + 15 * step);
-  }
+  static Vec256<int16_t> arange(int16_t base = 0, int16_t step = 1);
   static Vec256<int16_t>
   set(Vec256<int16_t> a, Vec256<int16_t> b, int16_t count = size()) {
     switch (count) {
@@ -512,6 +500,22 @@ Vec256<int32_t> inline operator*(const Vec256<int32_t>& a, const Vec256<int32_t>
 template <>
 Vec256<int16_t> inline operator*(const Vec256<int16_t>& a, const Vec256<int16_t>& b) {
   return _mm256_mullo_epi16(a, b);
+}
+
+// define arange here to utilize operators * and +.
+Vec256<int64_t> Vec256<int64_t>::arange(int64_t base, int64_t step) {
+  static const Vec256<int64_t> n(0, 1, 2, 3);
+  return Vec256<int64_t>(base) + n * Vec256<int64_t>(step);
+}
+
+Vec256<int32_t> Vec256<int32_t>::arange(int32_t base, int32_t step) {
+  static const Vec256<int32_t> n(0, 1, 2, 3, 4, 5, 6, 7);
+  return Vec256<int32_t>(base) + n * Vec256<int32_t>(step);
+}
+
+Vec256<int16_t> Vec256<int16_t>::arange(int16_t base, int16_t step) {
+  static const Vec256<int16_t> n(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15);
+  return Vec256<int16_t>(base) + n * Vec256<int16_t>(step);
 }
 
 template <>
