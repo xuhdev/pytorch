@@ -13,11 +13,11 @@ struct Vec256i {
 protected:
   __m256i values;
 
+public:
   static inline __m256i invert(const __m256i& v) {
-    const auto ones = _mm256_set1_epi64x(-1);
+    static const auto ones = _mm256_set1_epi64x(-1);
     return _mm256_xor_si256(ones, v);
   }
-public:
   Vec256i() {}
   Vec256i(__m256i v) : values(v) {}
   operator __m256i() const {
@@ -677,6 +677,16 @@ DEFINE_INTEGER_BINARY_OP(|, _mm256_or_si256)
 DEFINE_INTEGER_BINARY_OP(^, _mm256_xor_si256)
 
 #undef DEFINE_INTEGER_BINARY_OP
+
+Vec256<int64_t> inline operator ~(const Vec256<int64_t> &a) {
+  return Vec256i::invert(a);
+}
+Vec256<int32_t> inline operator ~(const Vec256<int32_t> &a) {
+  return Vec256i::invert(a);
+}
+Vec256<int16_t> inline operator ~(const Vec256<int16_t> &a) {
+  return Vec256i::invert(a);
+}
 
 #endif
 

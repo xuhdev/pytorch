@@ -613,6 +613,18 @@ DEFINE_BITWISE_OP(^)
 #undef DEFINE_BITWISE_OP
 
 template <typename T>
+Vec256<T> inline operator ~(const Vec256<T> &a) {
+  using iT = int_same_size_t<T>;
+  iT buffer[Vec256<T>::size()];
+  for (int64_t i = 0; i != Vec256<T>::size(); i++) {
+    auto a_val = a[i];
+    iT *i_a_ptr = reinterpret_cast<iT*>(&a_val);
+    buffer[i] = ~(*i_a_ptr);
+  }
+  return Vec256<T>::loadu(buffer);
+}
+
+template <typename T>
 inline T fmadd(const T& a, const T& b, const T& c) {
   return a * b + c;
 }
