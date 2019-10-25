@@ -39,15 +39,6 @@ SKIP_PYTHON_BINDINGS = [
     'data', 'is_leaf', 'output_nr', '_version', 'requires_grad_'
 ]
 
-# These function signatures are not exposed to Python. Note that this signature
-# list does not support regex.
-SKIP_PYTHON_BINDINGS_SIGNATURES = [
-    'add(Tensor, Scalar, Scalar)', 'add_(Tensor, Scalar, Scalar)',
-    'sub(Tensor, Scalar, Scalar)', 'sub_(Tensor, Scalar, Scalar)',
-    'mul(Tensor, Scalar)', 'mul_(Tensor, Scalar)',
-    'div(Tensor, Scalar)', 'div_(Tensor, Scalar)',
-]
-
 PY_VARIABLE_METHOD_VARARGS = CodeTemplate("""\
 static PyObject * ${pycname}(PyObject* self_, PyObject* args, PyObject* kwargs)
 {
@@ -173,12 +164,6 @@ def should_generate_python_binding(declaration):
     name = declaration['name']
     for pattern in SKIP_PYTHON_BINDINGS:
         if re.match('^' + pattern + '$', name):
-            return False
-
-    simple_types = [arg['simple_type'] for arg in declaration['arguments']]
-    signature = '{}({})'.format(name, ', '.join(simple_types))
-    for pattern in SKIP_PYTHON_BINDINGS_SIGNATURES:
-        if pattern == signature:
             return False
 
     return True

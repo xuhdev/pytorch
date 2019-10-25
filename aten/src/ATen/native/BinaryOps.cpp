@@ -161,6 +161,7 @@ static Tensor wrapped_scalar_tensor_and_check_convert(Scalar scalar, Tensor tens
 }
 
 Tensor add(const Tensor& self, Scalar other, Scalar alpha) {
+  std::cout << "Hi" << std::endl;
   return native::add(self, wrapped_scalar_tensor(other), alpha);
 }
 
@@ -171,6 +172,7 @@ Tensor& add_(Tensor& self, Scalar other, Scalar alpha) {
 // WARNING: There doesn't appear to be any testing for this function
 // with sparse self input.
 Tensor div(const Tensor& self, Scalar other) {
+  std::cout << "Hi" << std::endl;
   return self.div(wrapped_scalar_tensor(other)); // redispatch!
 }
 
@@ -183,6 +185,7 @@ Tensor& div_(Tensor& self, Scalar other) {
 }
 
 Tensor mul(const Tensor& self, Scalar other) {
+  std::cout << "Hi" << std::endl;
   return native::mul(self, wrapped_scalar_tensor(other));
 }
 
@@ -199,6 +202,7 @@ Tensor& sub_(Tensor& self, Scalar other, Scalar alpha) {
 }
 
 Tensor rsub(const Tensor& self, Scalar other, Scalar alpha) {
+  std::cout << "Hi" << std::endl;
   return native::rsub(self, wrapped_scalar_tensor(other), alpha);
 }
 
