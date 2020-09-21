@@ -331,7 +331,8 @@ class TestTypePromotion(TestCase):
         # this seems like odd behavior but ints also create float tensors, numpy doesn't have this function.
         self.assertEqual(torch.scalar_tensor(False, device=device), torch.tensor(0., device=device))
 
-    @dtypes(*itertools.product(torch.testing.get_all_dtypes(), torch.testing.get_all_dtypes()))
+    @dtypes(*itertools.product(torch.testing.get_all_dtypes(include_complex32=True),
+                               torch.testing.get_all_dtypes(include_complex32=True)))
     def test_result_type(self, device, dtypes):
         "Test result_type for tensor vs tensor and scalar vs scalar."
 
@@ -400,6 +401,8 @@ class TestTypePromotion(TestCase):
                    torch.tensor(1., dtype=torch.complex128, device=device), torch.complex64)
         _test_spot(torch.tensor([1., 1.], dtype=torch.complex128, device=device),
                    torch.tensor(1., dtype=torch.complex64, device=device), torch.complex128)
+        _test_spot(torch.tensor([1., 1.], dtype=torch.complex32, device=device),
+                   torch.tensor(1., dtype=torch.bool, device=device), torch.complex32)
         _test_spot(torch.tensor([1, 1], dtype=torch.bool, device=device), 1., torch.get_default_dtype())
 
     @float_double_default_dtype
