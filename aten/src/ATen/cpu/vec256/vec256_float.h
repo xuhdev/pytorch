@@ -288,6 +288,10 @@ public:
   Vec256<float> ge(const Vec256<float>& other) const;
   Vec256<float> lt(const Vec256<float>& other) const;
   Vec256<float> le(const Vec256<float>& other) const;
+
+  inline Vec256<float> operator!() const {
+    return *this != Vec256<float>(static_cast<float>(0));
+  }
 };
 
 template <>

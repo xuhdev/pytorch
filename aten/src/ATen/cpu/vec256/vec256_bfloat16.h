@@ -461,6 +461,10 @@ public:
   Vec256<BFloat16> ge(const Vec256<BFloat16>& other) const;
   Vec256<BFloat16> lt(const Vec256<BFloat16>& other) const;
   Vec256<BFloat16> le(const Vec256<BFloat16>& other) const;
+
+  inline Vec256<BFloat16> operator!() const {
+    return *this != Vec256<BFloat16>(static_cast<BFloat16>(0));
+  }
 };
 
 template<typename Op>

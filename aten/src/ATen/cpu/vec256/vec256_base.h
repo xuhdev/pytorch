@@ -500,6 +500,14 @@ public:
   Vec256<T> ge(const Vec256<T>& other) const { return binary_pred_bool(other, std::greater_equal<T>()); }
   Vec256<T> lt(const Vec256<T>& other) const { return binary_pred_bool(other, std::less<T>()); }
   Vec256<T> le(const Vec256<T>& other) const { return binary_pred_bool(other, std::less_equal<T>()); }
+
+  inline Vec256<T> operator!() const {
+    Vec256<T> b;
+    for (int64_t i = 0; i < Vec256<T>::size(); ++ i) {
+      b[i] = static_cast<T>(!values[i]);
+    }
+    return b;
+  }
 };
 
 template <class T> Vec256<T> inline operator+(const Vec256<T> &a, const Vec256<T> &b) {
@@ -725,7 +733,6 @@ inline Vec256<T> operator~(const Vec256<T>& a) {
   memset((T*) ones, 0xFF, 32);
   return a ^ ones;
 }
-
 
 template <typename T>
 inline Vec256<T>& operator += (Vec256<T>& a, const Vec256<T>& b) {

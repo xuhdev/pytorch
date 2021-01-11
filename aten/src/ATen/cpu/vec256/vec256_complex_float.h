@@ -368,6 +368,9 @@ public:
   Vec256<c10::complex<float>> ge(const Vec256<c10::complex<float>>& other) const {
     TORCH_CHECK(false, "not supported for complex numbers");
   }
+  inline Vec256<c10::complex<float>> operator!() const {
+    return *this != Vec256<c10::complex<float>>(static_cast<c10::complex<float>>(0));
+  }
 };
 
 template <> Vec256<c10::complex<float>> inline operator+(const Vec256<c10::complex<float>> &a, const Vec256<c10::complex<float>> &b) {

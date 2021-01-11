@@ -157,6 +157,10 @@ public:
   Vec256<int64_t> ge(const Vec256<int64_t>& other) const;
   Vec256<int64_t> lt(const Vec256<int64_t>& other) const;
   Vec256<int64_t> le(const Vec256<int64_t>& other) const;
+
+  inline Vec256<int64_t> operator!() const {
+    return *this != Vec256<int64_t>(static_cast<int64_t>(0));
+  }
 };
 
 template <>
@@ -282,6 +286,10 @@ public:
   Vec256<int32_t> ge(const Vec256<int32_t>& other) const;
   Vec256<int32_t> lt(const Vec256<int32_t>& other) const;
   Vec256<int32_t> le(const Vec256<int32_t>& other) const;
+
+  inline Vec256<int32_t> operator!() const {
+    return *this != Vec256<int32_t>(static_cast<int32_t>(0));
+  }
 };
 
 template <>
@@ -497,6 +505,10 @@ public:
   Vec256<int16_t> ge(const Vec256<int16_t>& other) const;
   Vec256<int16_t> lt(const Vec256<int16_t>& other) const;
   Vec256<int16_t> le(const Vec256<int16_t>& other) const;
+
+  inline Vec256<int16_t> operator!() const {
+    return *this != Vec256<int16_t>(static_cast<int16_t>(0));
+  }
 };
 
 template <>
@@ -746,6 +758,10 @@ public:
   Vec256<int8_t> ge(const Vec256<int8_t>& other) const;
   Vec256<int8_t> lt(const Vec256<int8_t>& other) const;
   Vec256<int8_t> le(const Vec256<int8_t>& other) const;
+
+  inline Vec256<int8_t> operator!() const {
+    return *this != Vec256<int8_t>(static_cast<int8_t>(0));
+  }
 };
 
 template <>
